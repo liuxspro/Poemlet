@@ -1,0 +1,50 @@
+<article id="poem-content">
+    <p class="poem-loading">正在加载诗词...</p>
+</article>
+
+<style>
+    :global(.poem-title) {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.75rem;
+        color: #1a1a2e;
+    }
+
+    :global(.poem-byline) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 0 0 1.25rem;
+        font-size: 1.1rem;
+    }
+
+    :global(.dynasty-badge) {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        background: #c0392b;
+        color: #fff;
+        border-radius: 0.35rem;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    :global(.poem-author) {
+        color: #555;
+    }
+
+    :global(.poem-line) {
+        font-size: 1.35rem;
+        line-height: 2;
+        margin: 0.25rem 0;
+        color: #333;
+    }
+
+    :global(.poem-loading) {
+        color: #999;
+    }
+
+    :global(.poem-error) {
+        color: #c0392b;
+    }
+</style>

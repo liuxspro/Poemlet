@@ -1,7 +1,7 @@
 ---
-import Poem from "../components/Poem.astro";
-import PoemDisplay from "../components/PoemDisplay.astro";
-import Layout from "../layouts/Layout.astro";
+import Poem from "../../components/Poem.astro";
+import PoemDisplay from "../../components/PoemDisplay.astro";
+import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout>
@@ -11,7 +11,7 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <script>
-    const apiUrl = "https://service.liuxs.pro/poetry/api/poems/random";
+    const id = location.pathname.split("/").pop();
 
     interface PoemData {
         id: number;
@@ -31,7 +31,9 @@ import Layout from "../layouts/Layout.astro";
         contentEl.innerHTML = `<p class="poem-loading">正在加载诗词...</p>`;
 
         try {
-            const res = await fetch(apiUrl);
+            const res = await fetch(
+                `https://service.liuxs.pro/poetry/api/poems/${id}`,
+            );
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const json: PoemResponse = await res.json();
             const poem = json.data;
