@@ -2,10 +2,12 @@
 import background from "../assets/background.svg";
 import Header from "./Header.astro";
 import Footer from "./Footer.astro";
+
+const { type } = Astro.props as { type?: string };
 ---
 
 <img class="bg" src={background.src} alt="" fetchpriority="high" />
-<Header />
+<Header type={type} />
 <section class="poem-card">
     <slot />
 </section>

@@ -1,5 +1,9 @@
+---
+const { type } = Astro.props as { type?: string };
+---
+
 <header id="type-header">
-    <span id="type-name"></span>
+    <span id="type-name">{type ?? ""}</span>
 </header>
 
 <style>

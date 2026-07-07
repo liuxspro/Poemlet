@@ -1,62 +1,61 @@
 ---
+export const prerender = false;
+
 import Poem from "../../components/Poem.astro";
 import PoemDisplay from "../../components/PoemDisplay.astro";
 import Layout from "../../layouts/Layout.astro";
+
+const { id } = Astro.params;
+
+interface PoemData {
+    id: number;
+    title: string;
+    content: string[];
+    author: { name: string };
+    dynasty: { name: string };
+    type: { name: string };
+}
+
+let serverPoem: PoemData | null = null;
+let fetchError = false;
+
+try {
+    const res = await fetch(`https://poetry.palemoky.com/api/poems/${id}`);
+    if (res.ok) {
+        serverPoem = (await res.json()).data;
+    } else {
+        fetchError = true;
+    }
+} catch {
+    fetchError = true;
+}
 ---
 
 <Layout>
-    <Poem>
-        <PoemDisplay />
+    <Poem type={serverPoem?.type.name ?? ""}>
+        <PoemDisplay>
+            {
+                fetchError ? (
+                    <p class="poem-error">加载失败，请稍后重试</p>
+                ) : serverPoem ? (
+                    <>
+                        <h1 class="poem-title">{serverPoem.title}</h1>
+                        <p class="poem-byline">
+                            <span class="dynasty-badge">
+                                {serverPoem.dynasty.name}
+                            </span>
+                            <span class="poem-author">
+                                {serverPoem.author.name}
+                            </span>
+                        </p>
+                        {serverPoem.content.map((line) => (
+                            <p class="poem-line">{line}</p>
+                        ))}
+                    </>
+                ) : (
+                    <p class="poem-loading">正在加载诗词...</p>
+                )
+            }
+        </PoemDisplay>
     </Poem>
 </Layout>
-
-<script>
-    const id = location.pathname.split("/").pop();
-
-    interface PoemData {
-        id: number;
-        title: string;
-        content: string[];
-        author: { name: string };
-        dynasty: { name: string };
-        type: { name: string };
-    }
-
-    interface PoemResponse {
-        data: PoemData;
-    }
-
-    async function fetchPoem() {
-        const contentEl = document.getElementById("poem-content")!;
-        contentEl.innerHTML = `<p class="poem-loading">正在加载诗词...</p>`;
-
-        try {
-            const res = await fetch(
-                `https://service.liuxs.pro/poetry/api/poems/${id}`,
-            );
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const json: PoemResponse = await res.json();
-            const poem = json.data;
-
-            const linesHtml = poem.content
-                .map((line) => `<p class="poem-line">${line}</p>`)
-                .join("");
-
-            document.getElementById("type-name")!.textContent = poem.type.name;
-
-            contentEl.innerHTML = `
-                <h1 class="poem-title">${poem.title}</h1>
-                <p class="poem-byline">
-                    <span class="dynasty-badge">${poem.dynasty.name}</span>
-                    <span class="poem-author">${poem.author.name}</span>
-                </p>
-                ${linesHtml}
-            `;
-        } catch (e) {
-            contentEl.innerHTML = `<p class="poem-error">加载失败，请稍后重试</p>`;
-            console.error("Failed to fetch poem:", e);
-        }
-    }
-
-    fetchPoem();
-</script>
